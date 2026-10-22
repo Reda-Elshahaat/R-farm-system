@@ -115,7 +115,10 @@ const checkBreeding = async (breedingId, status) => {
 
   return breeding;
 };
-
+const getPregnantBreedings = async () => {
+  const breedings = await Breeding.find({status:"pregnant"}).populate("maleId","code gender").populate("femaleId","code gender").sort({ breedingDate: -1 }).lean();
+  return breedings;
+}
 const getBreedingsByRabbit = async (rabbitId) => {
   const breedings = await Breeding.find({$or:[{maleId:rabbitId},{femaleId:rabbitId}]}).populate("maleId","code gender").populate("femaleId","code gender").sort({ breedingDate: -1 }).lean();
   return breedings;
@@ -124,5 +127,6 @@ const getBreedingsByRabbit = async (rabbitId) => {
 module.exports = {
   createBreeding,
   checkBreeding,
+  getPregnantBreedings,
   getBreedingsByRabbit
 };

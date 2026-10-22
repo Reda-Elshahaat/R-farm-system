@@ -76,9 +76,59 @@ const getKindling = async (id) => {
 
 
 const updateKindling = async (id, data) => {
-    const kindling = await Kindling.findByIdAndUpdate(id, data, { new: true }).populate("maleId","codegender").populate("femaleId","codegender").lean();
+    const kindling = await Kindling.findByIdAndUpdate(id, data, { new: true }).populate("maleId","code gender").populate("femaleId","code gender").lean();
     return kindling;
 }
+
+const createOffspring = async (kindlingId, offspringData) => {
+    const kindling = await Kindling.findById(kindlingId);
+
+    if (!kindling) {
+        throw new Error("Kindling record not found");
+    }
+
+    const Rabbit = require("../models/Rabbit");
+
+    const existingOffspringCount = await Rabbit.countDocuments({
+        kindlingId: kindling._id,
+    });
+
+    if (existingOffspringCount + offspringData.length > kindling.alive) {
+        throw new Error(
+            `Cannot add more than ${kindling.alive} offspring to this kindling`
+        );
+    }
+
+    const rabbits = offspringData.map((offspring) => ({
+        code: offspring.code,
+        gender: offspring.gender,
+        breed: offspring.breed,
+        birthDate: kindling.kindlingDate,
+        weight: offspring.weight,
+        fatherId: kindling.maleId,
+        motherId: kindling.femaleId,
+        kindlingId: kindling._id,
+        status: "growing",
+        breedingStatus: "not_ready",
+    }));
+
+    return await Rabbit.create(rabbits);
+};
+
+const getOffspringByKindling = async (kindlingId) => {
+  const kindling = await Kindling.findById(kindlingId);
+
+  if (!kindling) {
+    throw new Error("Kindling record not found");
+  }
+
+  const Rabbit = require("../models/Rabbit");
+
+  return await Rabbit.find({ kindlingId: kindling._id })
+    .select("code image gender breed birthDate weight status")
+    .sort({ code: 1 })
+    .lean();
+};
 
 
 module.exports = { 
@@ -86,5 +136,7 @@ module.exports = {
     getKindlings,
     getKindlingsByRabbit,
     getKindling,
-    updateKindling
+    updateKindling,
+    createOffspring,
+    getOffspringByKindling
 };

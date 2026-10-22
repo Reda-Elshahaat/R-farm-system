@@ -45,10 +45,47 @@ const updateKindling = async (req, res) => {
     }
 };
 
+const createOffspring = async (req, res) => {
+  try {
+    const { offspring } = req.body;
+
+    if (!Array.isArray(offspring) || offspring.length === 0) {
+      return res.status(400).json({
+        message: "Offspring must be a non-empty array",
+      });
+    }
+
+    const rabbits = await kindlingService.createOffspring(
+      req.params.id,
+      offspring
+    );
+
+    res.status(201).json(rabbits);
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+const getOffspringByKindling = async (req, res) => {
+  try {
+    const offspring = await kindlingService.getOffspringByKindling(
+      req.params.id
+    );
+
+    res.status(200).json(offspring);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
 module.exports = { 
     createKindling,
     getKindlings,
     getKindlingsByRabbit,
     getKindling,
-    updateKindling
+    updateKindling,
+    createOffspring,
+    getOffspringByKindling
  };

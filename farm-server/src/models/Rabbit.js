@@ -48,6 +48,12 @@ const rabbitSchema = new mongoose.Schema(
       ref: "Rabbit",
       default: null,
     },
+    
+    kindlingId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Kindling",
+      default: null,
+    },
 
     status: {
       type: String,

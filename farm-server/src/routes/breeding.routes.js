@@ -5,6 +5,7 @@ const router = express.Router();
 const breedingController = require("../controllers/breeding.controller");
 
 router.post("/", breedingController.createBreeding);
+router.get("/pregnant", breedingController.getPregnantBreedings);
 router.get("/:id", breedingController.getBreedingsByRabbit);
 router.patch("/check/:id",breedingController.checkBreeding);
 

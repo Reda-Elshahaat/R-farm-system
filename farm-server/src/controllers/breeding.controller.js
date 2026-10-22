@@ -29,6 +29,18 @@ const checkBreeding = async (req, res) => {
   }
 };
 
+const getPregnantBreedings = async (req, res) => {
+  try {
+    const breedings = await breedingService.getPregnantBreedings();
+
+    res.status(200).json(breedings);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 const getBreedingsByRabbit = async (req, res) => {
   try {
     const breedings = await breedingService.getBreedingsByRabbit(req.params.id);
@@ -44,5 +56,6 @@ const getBreedingsByRabbit = async (req, res) => {
 module.exports = {
   createBreeding,
   checkBreeding,
+  getPregnantBreedings,
   getBreedingsByRabbit
 };

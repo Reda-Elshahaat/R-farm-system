@@ -24,7 +24,7 @@ const getBreedingStatus = (rabbit) => {
     }
     // male
     if (rabbit.gender === "male") {
-        if (ageInDays >= 150 && rabbit.weight >= 3.2) {
+        if (ageInDays >= 150 && rabbit.weight >= 3.1) {
             return "ready";
         }else {
             return "not_ready";
@@ -54,10 +54,11 @@ const canBreed = async (maleCode, femaleCode) => {
   const male = await Rabbit.findOne({ code: maleCode }).lean();
   const female = await Rabbit.findOne({ code: femaleCode }).lean();
 
+  // نتأكد إن الاتنين موجودين
   if (!male || !female) {
     throw new Error("One or both rabbits not found");
   }
-
+  // نتأكد من النوع
   if (male.gender !== "male" || female.gender !== "female") {
     throw new Error("Invalid breeding pair");
   }
@@ -147,7 +148,7 @@ const getRabbitDetails = async (id) => {
       { motherId: rabbit._id },
     ],
   })
-    .select("code gender breed birthDate weight status image")
+    .select("code image gender breed birthDate weight status")
     .lean();
 
   const matingCount = breedings.length;
